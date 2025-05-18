@@ -10,12 +10,10 @@ const hoursEl = document.querySelector('[data-hours]');
 const minutesEl = document.querySelector('[data-minutes]');
 const secondsEl = document.querySelector('[data-seconds]');
 
-
 let userSelectedDate = null;
 let timerID = null;
 
 startButton.disabled = true;
-
 
 const options = {
     enableTime: true,
@@ -24,7 +22,7 @@ const options = {
     minuteIncrement: 1,
     onClose(selectedDates) {
         const selectedDate = selectedDates[0];
-        console.log(selectedDates[0]);
+
         if (selectedDate <= new Date()) {
             iziToast.error({
                 title: 'Error',
@@ -41,13 +39,8 @@ const options = {
 
 flatpickr(input, options);
 
-  
-
-
-
-
-
 startButton.addEventListener('click', () => {
+    clearInterval(timerID); // Очищення попереднього таймера
     startButton.disabled = true;
     input.disabled = true;
 
@@ -57,25 +50,26 @@ startButton.addEventListener('click', () => {
 
         if (diff <= 0) {
             clearInterval(timerID);
-            updetTimerDisplay({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+            updateTimerDisplay({ days: 0, hours: 0, minutes: 0, seconds: 0 });
             input.disabled = false;
+            startButton.disabled = true;
             return;
         }
         const time = convertMs(diff);
-        updetTimerDisplay(time);
+        updateTimerDisplay(time);
     }, 1000);
 });
 
-function updetTimerDisplay({ days, hours, minutes, seconds }) {
+function updateTimerDisplay({ days, hours, minutes, seconds }) { 
     daysEl.textContent = addLeadingZero(days);
     hoursEl.textContent = addLeadingZero(hours);
     minutesEl.textContent = addLeadingZero(minutes);
     secondsEl.textContent = addLeadingZero(seconds);
-};
+}
 
 function addLeadingZero(value) {
     return String(value).padStart(2, '0');
-};
+}
 
 function convertMs(ms) {
     const second = 1000;
@@ -89,4 +83,4 @@ function convertMs(ms) {
     const seconds = Math.floor((((ms % day) % hour) % minute) / second);
   
     return { days, hours, minutes, seconds };
-};
+}
